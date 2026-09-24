@@ -1,0 +1,312 @@
+/* Vežimėlių kampelis. Spalvos ir šriftai iš context/stilius.md (Botanical Garden).
+   Formų sistema: nuotraukos arkoje (vežimėlio stogelio forma), langeliai 14px, mygtukai pilnai apvalūs. */
+
+:root {
+  --zalia: #4A7C59;
+  --zalia-tamsi: #2F4F3A;
+  --geltona: #F9A620;
+  --terakota: #B7472A;
+  --kremine: #F5F3ED;
+  --balta: #FFFFFF;
+  --tekstas: #2B2B2B;
+  --tekstas-silpnas: #55594f;
+
+  --fonas: #FAF8F2;          /* šviesiai kreminis puslapio fonas */
+  --fonas-blokas: #F1EDE3;
+  --antraste: var(--zalia-tamsi);
+  --linija: #dcd8cc;
+
+  --serif: Georgia, Cambria, "Times New Roman", serif;
+  --sans: Calibri, "Segoe UI", system-ui, sans-serif;
+  --r: 14px;
+  --plotis: 1240px;
+  --tarpas: clamp(16px, 4vw, 48px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fonas: #1c2620;
+    --fonas-blokas: #243128;
+    --tekstas: #ECEAE3;
+    --tekstas-silpnas: #b9bcb2;
+    --antraste: #E6EFE3;
+    --linija: #3a4a3f;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--fonas);
+  color: var(--tekstas);
+  font-family: var(--sans);
+  font-size: 1.125rem;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video { display: block; max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--geltona); outline-offset: 3px; border-radius: 4px; }
+
+h1, h2 {
+  font-family: var(--serif);
+  font-weight: 700;
+  color: var(--antraste);
+  margin: 0;
+  text-wrap: balance;
+}
+h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); line-height: 1.1; letter-spacing: -0.01em; }
+
+section { padding: clamp(56px, 8vw, 104px) var(--tarpas); }
+section > * { max-width: var(--plotis); margin-inline: auto; }
+
+/* ---------- Mygtukai ---------- */
+.mygtukas {
+  display: inline-block;
+  background: var(--zalia-tamsi);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 0.85em 1.6em;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: transform .2s cubic-bezier(.16,1,.3,1), background-color .2s;
+}
+.mygtukas:hover { background: var(--zalia); }
+.mygtukas:active { transform: translateY(1px) scale(.98); }
+.mygtukas-mazas { padding: .55em 1.2em; font-size: 1rem; }
+@media (prefers-color-scheme: dark) {
+  .mygtukas { background: var(--geltona); color: #2B2B2B; }
+  .mygtukas:hover { background: #ffb940; }
+}
+
+.nuoroda {
+  font-weight: 700;
+  color: var(--antraste);
+  text-decoration: underline;
+  text-decoration-color: var(--geltona);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+.nuoroda:hover { text-decoration-color: var(--zalia); }
+
+/* ---------- Viršus ---------- */
+.virsus {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 32px;
+  height: 68px;
+  padding: 0 var(--tarpas);
+  background: color-mix(in srgb, var(--fonas) 92%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--linija);
+}
+.zenklas {
+  font-family: var(--serif); font-weight: 700; font-size: 1.25rem;
+  color: var(--antraste); text-decoration: none; white-space: nowrap;
+}
+.virsus nav { display: flex; gap: 24px; margin-left: auto; }
+.virsus nav a { text-decoration: none; color: var(--tekstas-silpnas); font-size: 1rem; }
+.virsus nav a:hover { color: var(--antraste); }
+
+/* ---------- Pirmas ekranas ---------- */
+.herojus {
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 80px);
+  max-width: calc(var(--plotis) + 2 * var(--tarpas));
+  margin: 0 auto;
+  padding-top: clamp(32px, 5vw, 72px);
+  padding-bottom: clamp(40px, 6vw, 80px);
+  min-height: calc(100dvh - 68px);
+}
+.herojus > * { max-width: none; margin: 0; }
+.herojus h1 {
+  font-size: clamp(2.3rem, 4.4vw, 3.8rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  max-width: 16ch;
+}
+.herojus-sub {
+  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
+  color: var(--tekstas-silpnas);
+  max-width: 34ch;
+  margin: 24px 0 36px;
+}
+.herojus-veiksmai { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+
+.arka {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 999px 999px var(--r) var(--r);
+  background: var(--fonas-blokas);
+}
+.arka img, .arka video { width: 100%; height: 100%; object-fit: cover; }
+.herojus-video { aspect-ratio: 720 / 898; max-height: 78dvh; justify-self: end; width: 100%; max-width: 520px; position: relative; }
+.herojus-video::after {
+  /* geltonas stogelio kraštas */
+  content: ""; position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 6px 0 var(--geltona);
+  pointer-events: none;
+}
+
+/* Vienintelis orkestruotas momentas: pirmo ekrano įėjimas */
+@media (prefers-reduced-motion: no-preference) {
+  .herojus h1, .herojus-sub, .herojus-veiksmai, .herojus-video {
+    animation: iskyla .9s cubic-bezier(.16,1,.3,1) both;
+  }
+  .herojus-sub { animation-delay: .12s; }
+  .herojus-veiksmai { animation-delay: .22s; }
+  .herojus-video { animation-name: arka-atsiveria; animation-duration: 1.2s; animation-delay: .05s; }
+}
+@keyframes iskyla { from { opacity: 0; transform: translateY(18px); } }
+@keyframes arka-atsiveria { from { opacity: 0; clip-path: inset(100% 0 0 0 round 999px 999px 14px 14px); } to { clip-path: inset(0 0 0 0 round 999px 999px 14px 14px); } }
+
+/* ---------- Faktai ---------- */
+.faktai {
+  background: var(--zalia-tamsi);
+  color: #E9EFE6;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding-block: 44px;
+  max-width: none;
+}
+.faktai > div { max-width: none; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.faktai { padding-inline: max(var(--tarpas), calc((100% - var(--plotis)) / 2)); }
+.faktai strong { font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.5rem); color: var(--geltona); line-height: 1; }
+.faktai span { font-size: 1rem; max-width: 26ch; }
+
+/* ---------- Nuo ko pradėti ---------- */
+.pradeti h2 { margin-bottom: 36px; }
+.bento {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  grid-template-rows: repeat(2, minmax(300px, 1fr));
+  gap: 16px;
+}
+.langelis {
+  position: relative;
+  display: flex; align-items: flex-end;
+  border-radius: var(--r);
+  overflow: hidden;
+  text-decoration: none;
+  background: var(--fonas-blokas);
+  min-height: 240px;
+  isolation: isolate;
+}
+.langelis.didelis { grid-row: span 2; }
+.langelis.nuotrauka { background: #fff; border: 1px solid var(--linija); }
+.langelis.nuotrauka img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; padding: 12px 12px 96px;
+  transition: transform .5s cubic-bezier(.16,1,.3,1);
+  z-index: -1;
+}
+.langelis.didelis img { padding: 24px 24px 88px; }
+.langelis:hover img { transform: scale(1.04); }
+.langelis.zalias { background: var(--zalia); color: #fff; }
+.langelis.geltonas { background: var(--geltona); color: #2B2B2B; }
+.langelio-tekstas { padding: 20px 22px; display: flex; flex-direction: column; gap: 2px; }
+.langelio-tekstas b { font-family: var(--serif); font-size: 1.35rem; color: var(--zalia-tamsi); }
+.langelis.didelis .langelio-tekstas b { font-size: 1.6rem; line-height: 1.15; }
+.langelis.zalias b { color: #fff; }
+.langelis.geltonas b { color: #2B2B2B; }
+.langelio-tekstas small { font-size: 1rem; color: #55594f; }
+.langelis.zalias small { color: #E6EFE3; }
+.langelis.geltonas small { color: #3d3a30; }
+.langelis.zalias, .langelis.geltonas { align-items: flex-end; }
+
+/* ---------- Dovanos ---------- */
+.dovanos { background: var(--fonas-blokas); }
+.dovanos-tekstas p { max-width: 56ch; }
+.dovanos-tekstas p { color: var(--tekstas-silpnas); max-width: 56ch; margin: 18px 0 14px; }
+.el-pastas { font-weight: 700; color: var(--antraste); text-underline-offset: 5px; }
+.skyriai {
+  list-style: none; padding: 0; margin-top: 36px;
+  display: flex; flex-wrap: wrap; gap: 12px;
+}
+.skyriai a {
+  display: inline-block;
+  padding: .7em 1.2em;
+  border-radius: 999px;
+  border: 1.5px solid var(--zalia);
+  color: var(--antraste);
+  text-decoration: none;
+  background: var(--fonas);
+  transition: background-color .2s, color .2s;
+}
+.skyriai a:hover { background: var(--zalia); color: #fff; }
+
+/* ---------- Apie ---------- */
+.apie {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+  max-width: calc(var(--plotis) + 2 * var(--tarpas));
+  margin: 0 auto;
+}
+.apie > * { max-width: none; margin: 0; }
+.apie-foto { aspect-ratio: 1122 / 1402; max-width: 440px; }
+.apie-tekstas p { max-width: 58ch; margin: 18px 0; }
+.zenklai { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--serif); font-size: 1.15rem; color: var(--zalia); padding: 18px 0 24px !important; border-top: 1px solid var(--linija); margin-top: 28px !important; }
+@media (prefers-color-scheme: dark) { .zenklai { color: #9cc7a8; } }
+
+/* ---------- Atvykite ---------- */
+.atvykite {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+  background: var(--kremine);
+  color: #2B2B2B;
+  padding-inline: max(var(--tarpas), calc((100% - var(--plotis)) / 2));
+}
+.atvykite > * { max-width: none; margin: 0; }
+.atvykite h2 { color: var(--zalia-tamsi); }
+.emblema { aspect-ratio: 4 / 5; max-height: 560px; border-radius: var(--r); overflow: hidden; background: var(--kremine); }
+.emblema iframe { width: 100%; height: 100%; border: 0; display: block; pointer-events: none; }
+.atvykite address { font-style: normal; font-size: 1.3rem; line-height: 1.5; margin: 22px 0 14px; }
+.atvykite .el-pastas { color: var(--zalia-tamsi); }
+.atvykite .mygtukas { margin-top: 18px; background: var(--zalia-tamsi); color: #fff; }
+
+/* ---------- Apačia ---------- */
+.apacia {
+  padding: 28px var(--tarpas) 36px;
+  border-top: 2px solid var(--zalia);
+  text-align: center;
+}
+.socialiniai { display: flex; justify-content: center; gap: 24px; margin: 0 0 10px; }
+.socialiniai a { color: var(--antraste); font-weight: 700; }
+.parasas { margin: 0; font-size: .8rem; color: var(--zalia); }
+@media (prefers-color-scheme: dark) { .parasas { color: #9cc7a8; } }
+
+/* ---------- Telefonas ---------- */
+@media (max-width: 900px) {
+  .virsus nav { display: none; }
+  .virsus { justify-content: space-between; }
+  .herojus { grid-template-columns: 1fr; min-height: 0; gap: 28px; padding-top: 28px; }
+  .herojus-video { justify-self: stretch; max-width: none; aspect-ratio: 4 / 4.2; max-height: none; }
+  .herojus-video video { object-position: 50% 30%; }
+  .faktai { grid-template-columns: 1fr 1fr; gap: 26px 20px; }
+  .bento { grid-template-columns: 1fr 1fr; grid-template-rows: none; }
+  .langelis.didelis { grid-column: span 2; grid-row: auto; min-height: 340px; }
+  .apie, .atvykite { grid-template-columns: 1fr; }
+  .apie-foto { max-width: 360px; }
+  .emblema { max-width: 420px; width: 100%; }
+}
+@media (max-width: 520px) {
+  body { font-size: 1.0625rem; }
+  .zenklas { font-size: 1.1rem; }
+  .bento { grid-template-columns: 1fr; }
+  .langelis.didelis { grid-column: auto; }
+  .langelis { min-height: 220px; }
+  .langelio-tekstas b { font-size: 1.25rem; }
+}

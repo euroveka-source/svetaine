@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vežimėlių kampelis – 3D emblema (konturas)</title>
+<style>
+  :root { --navy: #291269; --kremine: #F5F3ED; --geltona: #F9A620; }
+  html, body { margin: 0; height: 100%; background: #F5F3ED; overflow: hidden; }
+  canvas { display: block; }
+  #parasas {
+    position: fixed; left: 0; right: 0; bottom: 9vh;
+    text-align: center;
+    font-family: Calibri, "Segoe UI", sans-serif;
+    font-weight: bold;
+    font-size: clamp(16px, 3.2vw, 40px);
+    letter-spacing: 0.10em;
+    color: #291269;
+    opacity: 0;
+    user-select: none;
+  }
+  #parasas::before {
+    content: ""; display: block; width: 6vw; height: 2px; margin: 0 auto 1.6vh;
+    background: var(--geltona); opacity: 0.85;
+  }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="parasas">VEZIMELIU-KAMPELIS.LT</div>
+
+<!-- Emblemos vektoriai iš D:\1 Vezimeliu kampelis\1 logo\VK_logo.pdf (CorelDRAW, 2023).
+     Spalvos priskiriamos JS'e pagal sluoksnio numerį, kad atitiktų tikrąjį logotipą. -->
+<script id="logo-svg" type="text/plain"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595.2756 841.8898">
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M297.6361 641.6572C419.5318 641.6572 518.3484 542.8406 518.3484 420.9449 518.3484 299.0492 419.5318 200.2326 297.6361 200.2326 175.7404 200.2326 76.9238 299.0492 76.9238 420.9449 76.9238 542.8406 175.7404 641.6572 297.6361 641.6572"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M226.1364 398.7306C192.8826 398.7306 104.3688 414.8844 76.9323 421.3137L76.9263 420.944C76.9263 306.3268 164.3437 212.099 276.1322 201.2834 283.4923 201.0263 290.6782 200.6776 297.6392 200.234 419.5131 200.234 518.3521 299.0701 518.3521 420.944 399.2329 481.049 303.5242 398.7306 226.1364 398.7306"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M151.6657 507.2956C151.5779 513.0711 147.1337 517.9374 141.3921 518.5607 135.0726 519.2461 129.3905 514.6744 128.7048 508.3549 128.0222 502.0637 132.6223 496.3476 138.9107 495.665 143.7627 495.1409 148.2384 497.7102 150.3655 501.7946 179.2579 493.9569 199.4142 474.3527 210.8608 448.5849 211.6312 446.8456 211.1185 447.0043 208.8893 447.0043H180.4022C167.3439 447.0043 166.9842 448.4602 168.715 434.6657 172.9185 401.2047 194.0238 372.0036 224.6751 353.289 234.2974 347.4142 234.9204 350.0427 225.7486 344.4826 211.9768 336.1348 202.7767 321.0032 202.7767 303.7275 202.7767 277.4327 224.1028 256.1063 250.4004 256.1063 276.6951 256.1063 298.0216 277.4327 298.0216 303.7275 298.0216 311.9873 295.9169 319.7599 292.2148 326.5296 288.0397 334.1747 288.269 331.988 297.0303 331.6198 299.5398 331.5149 302.0664 331.4639 304.6187 331.4639 307.1707 331.4639 309.7089 331.5263 312.224 331.6453 321.478 332.0816 321.0418 334.0531 316.8213 326.1643 313.2411 319.4821 311.2157 311.8456 311.2157 303.7275 311.2157 277.4327 332.5422 256.1063 358.8395 256.1063 385.1342 256.1063 406.4607 277.4327 406.4607 303.7275 406.4607 321.8162 396.3796 337.5485 381.5286 345.6071 374.9825 349.1589 374.7728 347.5896 381.5853 351.5241 417.6295 372.3293 441.2928 407.3343 441.2928 447.0043 441.2928 506.7573 390.3775 548.1694 336.2131 559.3779 321.4809 562.4229 321.0559 562.7231 315.7251 548.532 304.1683 517.7733 306.3521 486.2863 318.5833 454.2783 321.5829 446.4125 322.9537 447.0043 314.2154 447.0043H219.2734C217.5936 447.0043 217.6475 446.8229 217.0131 448.3752 205.1249 476.7746 183.3792 498.6731 151.6657 507.2956"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M215.3078 436.9516C216.8714 432.1392 218.166 427.1564 219.1912 422.0439 219.9163 416.8715 225.9556 417.6958 224.8931 422.0722 223.6499 428.451 222.0069 434.6487 219.9645 440.6029 219.2508 442.6875 218.6785 442.7583 220.9955 442.7583H324.7526C337.2639 438.1894 351.3277 447.5934 351.3192 461.391 351.3163 470.594 345.0166 478.3411 336.5331 480.5617 348.2005 479.12 358.8001 488.323 358.8001 500.2254 358.8001 511.3205 349.5515 520.3083 338.4763 520.0308 347.6395 521.7727 354.5512 529.8284 354.5512 539.496 354.5512 551.3647 344.0225 554.942 364.0997 546.4443 373.1496 542.6118 381.8032 537.8505 389.8307 532.171 408.0838 519.2575 422.966 501.6501 430.8973 480.6014 434.9563 469.8377 437.0468 458.513 437.0468 447.0043 437.0468 403.4764 409.4631 372.9129 374.3337 352.476 369.7421 349.8049 369.1587 350.5215 363.9977 351.0737 362.3037 351.258 360.5817 351.3515 358.8395 351.3515 347.7444 351.3515 337.5445 347.5644 329.4519 341.2052 324.5967 337.3897 324.1888 336.8174 317.8043 336.3077 313.4222 335.9565 309.0402 335.7128 304.6187 335.7128 300.2593 335.7128 295.914 335.9565 291.5719 336.2482 284.5868 336.71 284.4791 337.6729 279.049 341.769 271.0755 347.7824 261.1528 351.3515 250.4004 351.3515 249.3128 351.3515 248.2364 351.3146 247.1686 351.2438 239.4386 350.7253 238.8067 350.0427 231.8301 354.2321 201.6011 372.4002 177.5611 398.5506 172.9752 434.6487 171.828 443.662 171.6749 442.7583 180.3937 442.7583H207.2151C213.6141 442.7583 213.2994 443.1464 215.3078 436.9516"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M319.9654 548.532C308.4653 520.484 311.0088 490.1783 320.9712 460.4477 324.0162 451.3609 323.6224 451.4176 326.7156 460.476 336.8957 490.2718 338.1307 519.5945 327.4209 548.2885 323.8206 557.9277 323.9566 558.2648 319.9654 548.532"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M250.4004 347.1055C274.3498 347.1055 293.7756 327.6825 293.7756 303.7303 293.7756 279.7781 274.3498 260.3523 250.4004 260.3523 226.4454 260.3523 207.0227 279.7781 207.0227 303.7303 207.0227 327.6825 226.4454 347.1055 250.4004 347.1055"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M358.8395 347.1055C382.7917 347.1055 402.2147 327.6825 402.2147 303.7303 402.2147 279.7781 382.7917 260.3523 358.8395 260.3523 334.8845 260.3523 315.4618 279.7781 315.4618 303.7303 315.4618 327.6825 334.8845 347.1055 358.8395 347.1055"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M250.3976 320.737C259.7905 320.737 267.4043 313.1203 267.4043 303.7303 267.4043 294.3374 259.7905 286.7207 250.3976 286.7207 241.0078 286.7207 233.3908 294.3374 233.3908 303.7303 233.3908 313.1203 241.0078 320.737 250.3976 320.737"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M358.8367 320.737C368.2295 320.737 375.8434 313.1203 375.8434 303.7303 375.8434 294.3374 368.2295 286.7207 358.8367 286.7207 349.4469 286.7207 341.8299 294.3374 341.8299 303.7303 341.8299 313.1203 349.4469 320.737 358.8367 320.737"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M305.2315 365.1018V368.5209C308.5268 368.7565 310.3821 368.9782 310.7835 369.1576 311.0876 369.2959 311.2957 369.4765 311.434 369.6985 311.7107 370.0721 311.9185 370.8746 312.0843 372.1207 312.3896 374.2662 312.5415 378.2123 312.569 383.9712L312.6112 399.2556C312.6112 404.1286 312.5415 408.1992 312.3896 411.4661 312.2374 414.7333 312.0293 416.6444 311.7665 417.1842 311.6007 417.5442 311.3232 417.8069 310.9493 418.0003 310.3821 418.2642 308.471 418.4711 305.2315 418.6094V422.0158C310.1054 421.8216 314.4379 421.7244 318.2457 421.7244 322.8146 421.7244 327.147 421.8216 331.2312 422.0158V418.6094C327.8259 418.3603 325.8598 418.07 325.334 417.71 324.8082 417.3636 324.4893 416.505 324.3784 415.1631 324.2401 413.4597 324.1568 406.6345 324.1293 394.7142H324.6973C327.4248 396.902 331.3695 400.585 336.5067 405.7347 341.6426 410.8844 345.6162 415.1767 348.4259 418.6094L348.4681 420.1047 348.4259 421.6136 348.7859 422.0158C351.735 421.8216 354.2545 421.7244 356.3314 421.7244 358.5319 421.7244 360.9828 421.8216 363.7239 422.0158V418.6094L361.4125 418.3603C359.5711 418.1808 358.38 417.9728 357.8403 417.7511 356.7603 417.2675 355.3072 416.2706 353.4931 414.7469 350.7934 412.5042 347.3742 409.4314 343.2351 405.4992L336.022 398.6875 339.7462 394.1059C344.1484 388.7059 349.4089 382.5595 355.5281 375.6929 359.0453 371.7468 361.1486 369.5737 361.855 369.1576 362.3397 368.8948 363.6269 368.6732 365.7039 368.5209V365.1018L363.5583 365.1843 356.3314 365.3923C354.3928 365.3923 351.8734 365.2951 348.7859 365.1018 346.5992 367.9254 342.9023 372.4248 337.6828 378.6134 333.7792 383.2659 330.0687 387.4876 326.524 391.2676 326.0679 391.7523 325.7354 392.0426 325.5557 392.1259 325.389 392.1809 325.2231 392.2084 325.0709 392.2084 324.6551 392.2084 324.3784 392.0426 324.2126 391.71 324.1293 391.5031 324.0879 390.4228 324.0879 388.4706L324.2537 376.1773C324.3098 372.5915 324.4618 370.5146 324.6973 369.9751 324.8631 369.6012 325.1259 369.3246 325.5134 369.1576 326.054 368.9223 327.9643 368.7015 331.2312 368.5209V365.1018C327.2304 365.2951 322.8009 365.3923 317.9268 365.3923 315.4632 365.3923 311.2407 365.2951 305.2315 365.1018"/>
+<path transform="matrix(1,0,0,-1,0,841.8898)" d="M243.5318 418.6094V422.0158C248.6679 421.8216 253.3751 421.7244 257.6526 421.7244 261.4317 421.7244 265.5856 421.8216 270.0986 422.0158V418.6094C266.9562 418.3889 265.0873 418.1397 264.4781 417.8619 263.8687 417.5717 263.5637 417.1144 263.5637 416.4914 263.5637 415.7164 264.6998 412.518 266.97 406.9259L278.4467 378.9462 287.6258 401.567C291.0036 409.9014 292.6922 414.9 292.6922 416.5747 292.6922 417.1978 292.4016 417.6411 291.82 417.9178 291.2391 418.1808 289.273 418.4164 285.9228 418.6094V422.0158C290.8653 421.8216 294.1736 421.7244 295.8494 421.7244 297.6075 421.7244 300.75 421.8216 305.263 422.0158V418.6094C302.5355 418.3328 300.9441 418.015 300.5144 417.6264 299.8638 417.1144 298.2991 414.013 295.8072 408.31L283.3611 378.4476C280.8142 372.564 279.0139 367.8432 277.9209 364.2985H272.0089L257.6526 398.6875C254.3434 406.5372 252.0317 411.84 250.7162 414.6361 249.9548 416.2844 249.3045 417.295 248.7365 417.655 248.1831 418.015 246.4523 418.3328 243.5318 418.6094"/>
+</svg></script>
+
+<!-- Times New Roman Bold (C:\Windows\Fonts\timesbd.ttf) → Three.js typeface, tik užrašo raidės -->
+<script id="sriftas" type="application/json">{"glyphs":{"V":{"ha":1479,"x_min":16,"x_max":1458,"o":"m 1013 1356 l 1458 1356 l 1458 1319 q 1326 1240 1384 1307 l 1326 1240 q 1201 1005 1284 1190 l 1201 1005 l 734 -31 l 701 -31 l 236 1047 q 124 1276 152 1242 q 16 1319 95 1310 l 16 1319 l 16 1356 l 666 1356 l 666 1319 l 644 1319 q 524 1297 556 1319 l 524 1297 q 501 1253 501 1282 l 501 1253 q 509 1211 501 1235 q 563 1079 517 1186 l 563 1079 l 852 404 l 1120 1005 q 1179 1151 1168 1114 q 1190 1214 1190 1188 l 1190 1214 q 1174 1267 1190 1244 q 1127 1302 1158 1290 l 1127 1302 q 1013 1319 1084 1319 l 1013 1319 l 1013 1356"},"E":{"ha":1366,"x_min":41,"x_max":1274,"o":"m 698 1278 l 558 1278 l 558 726 l 585 726 q 772 807 714 726 q 846 1046 830 888 l 846 1046 l 884 1046 l 884 336 l 846 336 q 796 526 834 452 q 706 626 757 600 q 558 651 655 651 l 558 651 l 558 269 q 568 132 558 157 q 603 91 577 107 q 687 75 629 75 l 687 75 l 768 75 q 1073 163 958 75 q 1237 431 1187 251 l 1237 431 l 1274 431 l 1213 0 l 41 0 l 41 37 l 86 37 q 181 58 145 37 l 181 58 q 221 106 207 72 l 221 106 q 232 232 232 130 l 232 232 l 232 1124 q 227 1237 232 1216 l 227 1237 q 190 1291 217 1272 l 190 1291 q 86 1319 152 1319 l 86 1319 l 41 1319 l 41 1356 l 1176 1356 l 1176 955 l 1138 955 q 1057 1166 1109 1102 q 908 1260 1004 1230 l 908 1260 q 698 1278 852 1278 l 698 1278"},"Ž":{"ha":1366,"x_min":33,"x_max":1330,"o":"m 179 1356 l 1250 1356 l 453 76 l 711 76 q 967 99 894 76 l 967 99 q 1172 232 1086 135 q 1291 490 1258 328 l 1291 490 l 1330 490 l 1275 0 l 33 0 l 831 1282 l 630 1282 q 476 1275 513 1282 l 476 1275 q 345 1224 406 1262 q 243 1121 283 1185 q 179 959 202 1057 l 179 959 l 142 959 l 179 1356 m 789 1443 l 563 1443 l 361 1825 l 437 1825 l 676 1619 l 921 1819 l 1003 1819 l 789 1443"},"I":{"ha":797,"x_min":41,"x_max":750,"o":"m 705 37 l 750 37 l 750 0 l 41 0 l 41 37 l 86 37 q 181 58 145 37 l 181 58 q 221 106 207 72 l 221 106 q 232 232 232 130 l 232 232 l 232 1124 q 221 1254 232 1228 q 177 1300 210 1280 q 86 1319 143 1319 l 86 1319 l 41 1319 l 41 1356 l 750 1356 l 750 1319 l 705 1319 q 610 1298 646 1319 l 610 1298 q 569 1250 584 1284 l 569 1250 q 558 1124 558 1226 l 558 1124 l 558 232 q 570 102 558 128 q 615 57 581 76 q 705 37 648 37 l 705 37"},"M":{"ha":1933,"x_min":41,"x_max":1896,"o":"m 595 1356 l 976 462 l 1344 1356 l 1896 1356 l 1896 1319 l 1852 1319 q 1756 1298 1792 1319 l 1756 1298 q 1716 1251 1731 1284 l 1716 1251 q 1705 1126 1705 1227 l 1705 1126 l 1705 232 q 1716 102 1705 128 q 1761 57 1727 76 q 1852 37 1795 37 l 1852 37 l 1896 37 l 1896 0 l 1188 0 l 1188 37 l 1232 37 q 1328 58 1292 37 l 1328 58 q 1368 106 1353 72 l 1368 106 q 1379 232 1379 130 l 1379 232 l 1379 1237 l 859 0 l 835 0 l 307 1228 l 307 273 q 312 150 307 173 l 312 150 q 369 69 325 100 q 505 37 412 37 l 505 37 l 505 0 l 41 0 l 41 37 l 55 37 q 139 52 100 36 q 198 93 178 67 q 229 166 218 119 l 229 166 q 231 268 231 177 l 231 268 l 231 1126 q 220 1255 231 1229 q 175 1300 209 1280 q 84 1319 141 1319 l 84 1319 l 41 1319 l 41 1356 l 595 1356"},"Ė":{"ha":1366,"x_min":41,"x_max":1274,"o":"m 698 1278 l 558 1278 l 558 726 l 585 726 q 772 807 714 726 q 846 1046 830 888 l 846 1046 l 884 1046 l 884 336 l 846 336 q 796 526 834 452 q 706 626 757 600 q 558 651 655 651 l 558 651 l 558 269 q 568 132 558 157 q 603 91 577 107 q 687 75 629 75 l 687 75 l 768 75 q 1073 163 958 75 q 1237 431 1187 251 l 1237 431 l 1274 431 l 1213 0 l 41 0 l 41 37 l 86 37 q 181 58 145 37 l 181 58 q 221 106 207 72 l 221 106 q 232 232 232 130 l 232 232 l 232 1124 q 227 1237 232 1216 l 227 1237 q 190 1291 217 1272 l 190 1291 q 86 1319 152 1319 l 86 1319 l 41 1319 l 41 1356 l 1176 1356 l 1176 955 l 1138 955 q 1057 1166 1109 1102 q 908 1260 1004 1230 l 908 1260 q 698 1278 852 1278 l 698 1278 m 684 1784 l 684 1784 q 788 1741 745 1784 q 831 1637 831 1698 l 831 1637 q 788 1533 831 1576 q 684 1490 745 1490 l 684 1490 q 580 1533 623 1490 q 537 1637 537 1576 l 537 1637 q 580 1741 537 1698 q 684 1784 623 1784"},"L":{"ha":1366,"x_min":38,"x_max":1293,"o":"m 1252 476 l 1293 476 l 1242 0 l 38 0 l 38 37 l 83 37 q 178 58 142 37 l 178 58 q 218 106 204 72 l 218 106 q 229 232 229 130 l 229 232 l 229 1124 q 218 1254 229 1228 q 174 1300 207 1280 q 83 1319 140 1319 l 83 1319 l 38 1319 l 38 1356 l 761 1356 l 761 1319 l 702 1319 q 607 1298 643 1319 l 607 1298 q 566 1250 581 1284 l 566 1250 q 555 1124 555 1226 l 555 1124 l 555 260 q 567 128 555 156 q 614 85 579 99 l 614 85 q 735 76 639 76 l 735 76 l 848 76 q 1028 114 956 76 q 1153 234 1100 152 q 1252 476 1205 316 l 1252 476"},"Ų":{"ha":1479,"x_min":48,"x_max":1444,"o":"m 48 1319 l 48 1356 l 748 1356 l 748 1319 l 713 1319 q 605 1303 634 1319 q 563 1257 575 1286 q 550 1112 550 1228 l 550 1112 l 550 448 q 578 207 550 266 q 668 109 605 148 q 827 70 731 70 l 827 70 q 1015 120 937 70 q 1131 256 1092 169 q 1169 559 1169 343 l 1169 559 l 1169 1112 q 1150 1242 1169 1203 q 1102 1296 1131 1281 l 1102 1296 q 975 1319 1057 1319 l 975 1319 l 975 1356 l 1444 1356 l 1444 1319 l 1416 1319 q 1321 1296 1359 1319 q 1266 1227 1283 1273 l 1266 1227 q 1253 1112 1253 1195 l 1253 1112 l 1253 597 q 1222 252 1253 358 q 1068 57 1190 146 q 735 -32 946 -32 l 735 -32 q 463 15 559 -32 l 463 15 q 278 179 332 79 q 224 448 224 279 l 224 448 l 224 1112 q 211 1258 224 1229 q 166 1303 198 1286 q 48 1319 134 1320 l 48 1319 m 945 60 l 994 60 q 924 12 958 42 q 863 -55 890 -18 q 820 -132 836 -92 q 803 -213 803 -173 l 803 -213 q 814 -262 803 -241 q 841 -297 824 -283 q 879 -318 857 -311 q 921 -325 900 -325 l 921 -325 q 971 -315 947 -325 q 1013 -290 994 -306 l 1013 -290 l 1033 -315 q 927 -411 980 -381 q 825 -442 873 -442 l 825 -442 q 748 -429 782 -442 q 690 -394 714 -416 q 654 -343 666 -373 q 641 -281 641 -314 l 641 -281 q 670 -174 641 -227 q 744 -75 699 -121 q 842 6 788 -29 q 945 60 895 41 l 945 60"}," ":{"ha":512,"x_min":0,"x_max":0,"o":""},"K":{"ha":1593,"x_min":46,"x_max":1616,"o":"m 1250 1155 l 853 837 l 1330 240 q 1504 69 1431 114 l 1504 69 q 1616 37 1557 37 l 1616 37 l 1616 0 l 910 0 l 910 37 q 997 58 977 43 q 1016 95 1016 73 l 1016 95 q 924 253 1016 137 l 924 253 l 613 644 l 563 602 l 563 232 q 575 100 563 126 q 621 56 587 74 q 730 37 655 37 l 730 37 l 730 0 l 46 0 l 46 37 l 91 37 q 186 58 150 37 l 186 58 q 226 106 212 72 l 226 106 q 237 232 237 130 l 237 232 l 237 1124 q 226 1254 237 1228 q 182 1300 215 1280 q 91 1319 148 1319 l 91 1319 l 46 1319 l 46 1356 l 721 1356 l 721 1319 q 616 1299 652 1319 l 616 1299 q 575 1252 590 1285 l 575 1252 q 563 1124 563 1227 l 563 1124 l 563 702 l 1066 1109 q 1171 1245 1171 1194 l 1171 1245 q 1128 1305 1171 1283 l 1128 1305 q 1019 1319 1106 1316 l 1019 1319 l 1019 1356 l 1548 1356 l 1548 1319 q 1437 1294 1477 1314 q 1250 1155 1396 1273 l 1250 1155"},"A":{"ha":1479,"x_min":16,"x_max":1456,"o":"m 924 217 l 852 386 l 373 386 l 316 254 q 288 145 288 188 l 288 145 q 334 61 288 88 l 334 61 q 467 37 361 45 l 467 37 l 467 0 l 16 0 l 16 37 q 136 98 89 48 q 252 302 183 147 l 252 302 l 737 1384 l 756 1384 l 1245 272 q 1360 73 1315 114 l 1360 73 q 1456 37 1394 42 l 1456 37 l 1456 0 l 800 0 l 800 37 l 827 37 q 938 59 906 37 l 938 59 q 960 105 960 75 l 960 105 q 954 142 960 123 l 954 142 q 924 217 952 151 l 924 217 m 408 460 l 818 460 l 616 927 l 408 460"},"P":{"ha":1251,"x_min":52,"x_max":1189,"o":"m 553 614 l 553 614 l 553 238 q 567 100 553 128 q 615 54 580 71 q 741 37 649 37 l 741 37 l 741 0 l 52 0 l 52 37 q 180 55 146 37 q 227 100 213 72 q 240 238 240 128 l 240 238 l 240 1118 q 227 1257 240 1228 q 179 1302 213 1285 q 52 1319 145 1319 l 52 1319 l 52 1356 l 643 1356 q 1062 1252 935 1356 q 1189 992 1189 1148 l 1189 992 q 1107 766 1189 860 q 881 638 1025 672 l 881 638 q 553 614 784 614 m 594 1278 l 553 1278 l 553 692 q 603 690 586 690 l 603 690 q 791 763 725 690 q 857 987 857 835 l 857 987 q 791 1208 857 1138 q 594 1278 725 1278 l 594 1278"},"S":{"ha":1139,"x_min":106,"x_max":1057,"o":"m 932 1387 l 962 1387 l 973 935 l 932 935 q 790 1209 903 1105 q 544 1312 676 1312 l 544 1312 q 383 1258 442 1312 q 323 1132 323 1203 l 323 1132 q 344 1052 323 1087 l 344 1052 q 437 959 373 1005 l 437 959 q 654 842 484 926 l 654 842 q 975 621 892 725 l 975 621 q 1057 383 1057 517 l 1057 383 q 925 91 1057 213 q 588 -32 792 -32 l 588 -32 q 467 -19 524 -32 q 324 30 410 -6 l 324 30 q 245 50 276 50 l 245 50 q 190 30 219 50 q 143 -31 161 10 l 143 -31 l 106 -31 l 106 481 l 143 481 q 313 152 187 265 q 583 38 438 38 l 583 38 q 762 99 695 38 q 828 241 828 160 l 828 241 q 803 334 828 289 q 725 420 777 379 q 541 525 673 460 l 541 525 q 275 680 356 616 q 151 823 194 744 q 107 997 107 902 l 107 997 q 226 1273 107 1159 q 526 1387 345 1387 l 526 1387 q 654 1371 592 1387 l 654 1371 q 769 1327 701 1359 q 863 1294 836 1294 l 863 1294 q 904 1310 889 1294 q 932 1387 919 1326 l 932 1387"},".":{"ha":512,"x_min":90,"x_max":423,"o":"m 256 308 l 256 308 q 375 259 326 308 q 423 141 423 210 l 423 141 q 374 24 423 72 q 256 -25 325 -25 l 256 -25 q 139 24 187 -25 q 90 141 90 72 l 90 141 q 139 259 90 210 q 256 308 187 308"},"-":{"ha":682,"x_min":50,"x_max":633,"o":"m 633 574 l 633 367 l 50 367 l 50 574 l 633 574"}},"familyName":"Times New Roman","ascender":1825,"descender":-443,"underlinePosition":-223,"underlineThickness":195,"boundingBox":{"yMin":-671,"xMin":-1143,"yMax":2162,"xMax":4096},"resolution":2048,"original_font_information":{"format":0,"fontFamily":"Times New Roman","fontSubfamily":"Bold"},"cssFontWeight":"bold","cssFontStyle":"normal"}</script>
+
+<script type="module">
+import * as THREE from "three";
+import { SVGLoader } from "three/addons/loaders/SVGLoader.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+// "tamsus"    – tamsiai žalias fonas, blizgi emblema su atspindžiu grindyse, šviesos perbėgimas
+// "surinkimas" – kreminis fonas, emblema susirenka dalimis: diskas, vežimėlis, ratai, VK, raidės
+// "konturas"  – Viollos scenarijus: pirma vežimėlio kontūras, tada diskas, tada užrašas; kreminis fonas, šviesesnės spalvos
+const VARIANT = "konturas";
+const TAMSUS = VARIANT === "tamsus";
+const KONTURAS = VARIANT === "konturas";
+
+const MELYNA = KONTURAS ? 0x3D9BFF : 0x0080FF, ZALIA = KONTURAS ? 0x2ED27E : 0x00C664, NAVY = 0x291269, BALTA = 0xFFFFFF;   // konturas – šiek tiek šviesesnės
+const BG = TAMSUS ? 0x2F4F3A : 0xF5F3ED;
+const DURATION = 5.0;
+const CAPTURE = new URLSearchParams(location.search).has("capture");
+
+// ---- Renderer ----
+const W = () => window.innerWidth, H = () => window.innerHeight;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(CAPTURE ? 1 : Math.min(window.devicePixelRatio, 2));
+renderer.setSize(W(), H());
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.VSMShadowMap;
+renderer.toneMapping = THREE.NoToneMapping;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(BG);
+// aplinkos žemėlapis duoda blizgius atspindžius ant navy ir disko
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = TAMSUS ? 0.28 : 0.3;
+
+const camera = new THREE.PerspectiveCamera(30, W() / H(), 0.1, 200);
+
+// ---- Medžiagos ----
+const mat = {
+  melyna: new THREE.MeshStandardMaterial({ color: MELYNA, roughness: 0.42, metalness: 0.05 }),
+  zalia:  new THREE.MeshStandardMaterial({ color: ZALIA,  roughness: 0.42, metalness: 0.05 }),
+  navy:   new THREE.MeshStandardMaterial({ color: NAVY,   roughness: 0.2,  metalness: 0.15 }),
+  // tamsiame variante užrašas ratu – kreminis, nes navy ant tamsiai žalio fono nesiskaito
+  raides: new THREE.MeshStandardMaterial({ color: 0xF5F3ED, roughness: 0.3, metalness: 0.1, emissive: 0xF5F3ED, emissiveIntensity: 0.06 }),
+  balta:  new THREE.MeshStandardMaterial({ color: BALTA,  roughness: 0.4,  metalness: 0.0, emissive: 0xffffff, emissiveIntensity: TAMSUS ? 0.18 : 0.28 }),
+  konturas: new THREE.MeshStandardMaterial({ color: NAVY, roughness: 0.2, metalness: 0.15, transparent: true, opacity: 1 }),   // atskira, kad galėtų išnykti/atsirasti
+};
+
+// ---- Emblema iš SVG ----
+// 0 mėlyna, 1 žalia, 2 navy kontūras+rankena, 3 baltas kėbulas, 4 baltas stogelio ruožas, 5–6 balti ratai, 7–8 navy taškai, 9–10 V ir K
+const layer = [
+  { m: mat.melyna, z: 0.00,  d: 0.30, bevel: true  },
+  { m: mat.zalia,  z: 0.012, d: 0.30, bevel: true  },
+  { m: mat.navy,   z: 0.30,  d: 0.07, bevel: false },
+  { m: mat.balta,  z: 0.32,  d: 0.07, bevel: false },
+  { m: mat.balta,  z: 0.32,  d: 0.07, bevel: false },
+  { m: mat.balta,  z: 0.32,  d: 0.07, bevel: false },
+  { m: mat.balta,  z: 0.32,  d: 0.07, bevel: false },
+  { m: mat.navy,   z: 0.40,  d: 0.05, bevel: false },
+  { m: mat.navy,   z: 0.40,  d: 0.05, bevel: false },
+  { m: mat.navy,   z: 0.40,  d: 0.05, bevel: false },
+  { m: mat.navy,   z: 0.40,  d: 0.05, bevel: false },
+];
+// dalys surinkimo animacijai (indeksai pagal sluoksnius)
+const PARTS = { diskas: [0, 1], konturas: [2], kebulas: [3, 4], ratasK: [5, 7], ratasD: [6, 8], vk: [9, 10] };
+
+const svgData = new SVGLoader().parse(document.getElementById("logo-svg").textContent);
+const SCALE = 1 / 100;
+const CX = 297.636, CY = 420.945;
+
+const coin = new THREE.Group();
+const part = {};
+for (const name of Object.keys(PARTS)) { part[name] = new THREE.Group(); coin.add(part[name]); }
+const partOf = i => Object.keys(PARTS).find(k => PARTS[k].includes(i)) || "vk";
+
+svgData.paths.forEach((p, i) => {
+  const L = layer[i];
+  SVGLoader.createShapes(p).forEach(shape => {
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth: L.d / SCALE, curveSegments: 24,
+      bevelEnabled: L.bevel, bevelThickness: 4, bevelSize: 3, bevelSegments: 4,
+    });
+    geo.translate(-CX, -CY, L.z / SCALE);
+    geo.scale(SCALE, -SCALE, SCALE);
+    const mesh = new THREE.Mesh(geo, i === 2 ? mat.konturas : L.m);
+    mesh.castShadow = true; mesh.receiveShadow = true;
+    part[partOf(i)].add(mesh);
+  });
+});
+// ratų centrai (kad galėtų suktis apie savo ašį)
+// PDF koordinatės y eina aukštyn, SVG transformacija jas apverčia (841.89 - y), o paskui mes apverčiame dar kartą
+const svgY = yPdf => -((841.8898 - yPdf) - CY) * SCALE;
+const WHEEL_L = new THREE.Vector3((250.4 - CX) * SCALE, svgY(303.7), 0);
+const WHEEL_R = new THREE.Vector3((358.8 - CX) * SCALE, svgY(303.7), 0);
+for (const [g, c] of [[part.ratasK, WHEEL_L], [part.ratasD, WHEEL_R]]) {
+  g.children.forEach(m => m.geometry.translate(-c.x, -c.y, 0));
+  g.position.copy(c);
+}
+scene.add(coin);
+
+// ---- Užrašas ratu ----
+const font = new FontLoader().parse(JSON.parse(document.getElementById("sriftas").textContent));
+const TXT = "VEŽIMĖLIŲ KAMPELIS";
+const SIZE = 0.62, TRACK = 0.07, R_TXT = KONTURAS ? 2.62 : 2.44, LETTER_D = 0.22;   // konturas – didesnis tarpas tarp disko ir raidžių
+const adv = ch => (font.data.glyphs[ch] ? font.data.glyphs[ch].ha : font.data.glyphs["V"].ha) / font.data.resolution * SIZE + TRACK;
+const total = [...TXT].reduce((s, ch) => s + adv(ch), 0) - TRACK;
+const letters = [];
+let along = 0;
+[...TXT].forEach((ch, i) => {
+  const a = adv(ch);
+  const mid = along + (a - TRACK) / 2;
+  along += a;
+  if (ch === " ") return;
+  const geo = new TextGeometry(ch, {
+    font, size: SIZE, depth: LETTER_D, curveSegments: 12,
+    bevelEnabled: true, bevelThickness: 0.025, bevelSize: 0.018, bevelSegments: 3,
+  });
+  geo.computeBoundingBox();
+  const bb = geo.boundingBox;
+  geo.translate(-(bb.max.x + bb.min.x) / 2, -(bb.max.y + bb.min.y) / 2, 0);   // centras raidės viduryje
+  const mesh = new THREE.Mesh(geo, TAMSUS ? mat.raides : mat.navy);
+  mesh.castShadow = true;
+  const theta = Math.PI / 2 + (total / 2 - mid) / R_TXT;
+  const pivot = new THREE.Group();
+  const rMid = R_TXT + (bb.max.y + bb.min.y) / 2;
+  pivot.position.set(Math.cos(theta) * rMid, Math.sin(theta) * rMid, 0);
+  pivot.rotation.z = theta - Math.PI / 2;
+  pivot.add(mesh);
+  coin.add(pivot);
+  letters.push({ pivot, mesh, i: letters.length, theta });
+});
+const N_LET = letters.length;
+
+// ---- Grindys ----
+const box = new THREE.Box3().setFromObject(coin);
+const floorY = box.min.y - 0.02;
+let floor, mirror;
+if (TAMSUS) {
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.ShadowMaterial({ color: 0x0b1a10, opacity: 0.35 }));   // grindys nematomos, matosi tik šešėlis ir atspindys
+  // atspindys: apversta emblemos kopija po grindimis, permatoma
+  mirror = coin.clone(true);
+  mirror.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.transparent = true; o.material.opacity = 0.26; o.castShadow = false; o.receiveShadow = false; } });
+  mirror.scale.y = -1;
+  scene.add(mirror);
+} else {
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.ShadowMaterial({ color: 0x1a1030, opacity: 0.20 }));
+}
+floor.rotation.x = -Math.PI / 2; floor.position.y = floorY; floor.receiveShadow = true;
+scene.add(floor);
+
+// ---- Šviesos ----
+scene.add(new THREE.HemisphereLight(0xffffff, TAMSUS ? 0x1c3325 : 0xd9d6cc, TAMSUS ? 0.9 : 1.3));
+const key = new THREE.DirectionalLight(0xffffff, TAMSUS ? 2.8 : 2.4);
+key.position.set(-8, 9, 10);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.near = 1; key.shadow.camera.far = 60;
+const d = 9; key.shadow.camera.left = -d; key.shadow.camera.right = d; key.shadow.camera.top = d; key.shadow.camera.bottom = -d;
+key.shadow.radius = 10; key.shadow.blurSamples = 24; key.shadow.bias = -0.0005;
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xffffff, 0.6); fill.position.set(8, 3, 8); scene.add(fill);
+const rim = new THREE.DirectionalLight(0xffffff, 1.0); rim.position.set(3, 6, -8); scene.add(rim);
+// perbėganti šviesa (tik tamsiam variantui): siauras prožektorius, kuris nuslenka per emblemą
+let sweep = null;
+if (TAMSUS) {
+  sweep = new THREE.SpotLight(0xfff3d6, 0, 40, 0.28, 0.6, 1.2);
+  sweep.position.set(-6, 8, 9);
+  sweep.target.position.set(0, 0, 0);
+  scene.add(sweep, sweep.target);
+  // švytėjimas fone
+  const c = document.createElement("canvas"); c.width = c.height = 512;
+  const ctx = c.getContext("2d");
+  const g = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
+  g.addColorStop(0, "rgba(249,166,32,0.22)"); g.addColorStop(0.5, "rgba(249,166,32,0.06)"); g.addColorStop(1, "rgba(249,166,32,0)");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 512, 512);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  glow.position.set(0, 0.2, -2.5); glow.scale.set(14, 14, 1);
+  scene.add(glow);
+}
+
+// ---- Post-processing ----
+const FxShader = {
+  uniforms: { tDiffuse: { value: null }, aber: { value: 0 }, vig: { value: new THREE.Color(TAMSUS ? 0x142519 : 0xE6E2D6) }, vigAmt: { value: TAMSUS ? 1.0 : 0.8 } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+  fragmentShader: `
+    uniform sampler2D tDiffuse; uniform float aber; uniform vec3 vig; uniform float vigAmt; varying vec2 vUv;
+    void main(){
+      vec2 c = vUv - 0.5;
+      vec2 off = c * aber;
+      vec3 col = vec3(texture2D(tDiffuse, vUv + off).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - off).b);
+      float v = smoothstep(0.30, 1.0, length(c * vec2(1.0, 0.72)));
+      col = mix(col, vig, v * vigAmt * (${TAMSUS ? "0.75" : "0.55"}));
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+};
+let composer, fx;
+function buildComposer() {
+  const pr = renderer.getPixelRatio();
+  const rt = new THREE.WebGLRenderTarget(W() * pr, H() * pr, { samples: 4 });
+  composer = new EffectComposer(renderer, rt);
+  composer.addPass(new RenderPass(scene, camera));
+  if (TAMSUS) composer.addPass(new UnrealBloomPass(new THREE.Vector2(W(), H()), 0.12, 0.5, 0.8));
+  fx = new ShaderPass(FxShader);
+  composer.addPass(fx);
+  composer.addPass(new OutputPass());
+}
+
+// ---- Kamera ----
+let camDist = 20;
+function frameCamera() {
+  const aspect = W() / H();
+  camera.aspect = aspect;
+  const fovRad = THREE.MathUtils.degToRad(camera.fov);
+  const wantWidth = (R_TXT + SIZE + 0.2) * 2 * 1.08;
+  camDist = wantWidth / (2 * Math.tan(fovRad / 2) * aspect);
+  camera.updateProjectionMatrix();
+}
+
+// ---- Animacija ----
+const clamp01 = x => Math.min(1, Math.max(0, x));
+const easeOutCubic = x => 1 - Math.pow(1 - x, 3);
+const easeInOut = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const easeOutBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const easeOutBounce = x => { const n1 = 7.5625, d1 = 2.75; if (x < 1 / d1) return n1 * x * x; if (x < 2 / d1) return n1 * (x -= 1.5 / d1) * x + 0.75; if (x < 2.5 / d1) return n1 * (x -= 2.25 / d1) * x + 0.9375; return n1 * (x -= 2.625 / d1) * x + 0.984375; };
+const seg = (t, a, b) => clamp01((t - a) / (b - a));
+const L = THREE.MathUtils.lerp;
+const parasas = document.getElementById("parasas");
+
+function resetParts() {
+  for (const g of Object.values(part)) { g.rotation.set(0, 0, 0); g.scale.set(1, 1, 1); }
+  part.diskas.position.set(0, 0, 0); part.kebulas.position.set(0, 0, 0); part.konturas.position.set(0, 0, 0); part.vk.position.set(0, 0, 0);
+  mat.konturas.opacity = 1;
+  part.ratasK.position.copy(WHEEL_L); part.ratasD.position.copy(WHEEL_R);
+}
+
+function setTamsus(t) {
+  // emblema atsisuka kaip moneta: iš toli ir maža → sukasi → sustoja priekiu
+  const p = easeOutCubic(seg(t, 0, 2.4));
+  coin.position.set(0, L(0.6, 0, p), L(-6, 0, p));
+  coin.rotation.set(L(0.25, 0, p), L(-4.2, 0, p), 0);
+  const s = L(0.35, 1, p); coin.scale.set(s, s, s);
+  // po sustojimo lengvai kvėpuoja
+  const idle = seg(t, 2.4, 5);
+  coin.rotation.y += Math.sin(idle * Math.PI * 1.2) * 0.07;
+  coin.position.y += Math.sin(idle * Math.PI * 1.6) * 0.04;
+
+  // raidės išnyra paeiliui pagal ratą, su lengvu „šoktelėjimu"
+  letters.forEach(({ mesh, i }) => {
+    const start = 1.3 + i * 0.055;
+    const q = seg(t, start, start + 0.4);
+    const k = q === 0 ? 0 : easeOutBack(q);
+    mesh.scale.set(Math.max(k, 0.001), Math.max(k, 0.001), Math.max(k, 0.001));
+    mesh.position.z = (1 - q) * 0.6;
+    mesh.rotation.x = (1 - q) * 1.2;
+  });
+
+  // šviesos perbėgimas per emblemą 2.6–3.6 s
+  const sw = seg(t, 2.6, 3.7);
+  sweep.intensity = Math.sin(sw * Math.PI) * 260;
+  sweep.position.set(L(-9, 9, sw), 8, 9);
+  sweep.target.position.set(L(-6, 6, sw), 0, 0);
+
+  camera.position.set(0, L(-1.2, 0.5, easeInOut(seg(t, 0, 2.8))), camDist);
+  camera.lookAt(0, 0.1, 0);
+  fx.uniforms.aber.value = 0.008 * (1 - easeOutCubic(seg(t, 0, 2.0)));
+  parasas.style.opacity = easeInOut(seg(t, 3.4, 4.0)).toFixed(3);
+  syncMirror();
+}
+
+// atspindys kartoja kiekvieno emblemos elemento padėtį (struktūra identiška, nes tai klonas)
+function syncMirror() {
+  if (!mirror) return;
+  const walk = (a, b) => {
+    for (let i = 0; i < a.children.length; i++) {
+      const x = a.children[i], y = b.children[i];
+      y.position.copy(x.position); y.rotation.copy(x.rotation); y.scale.copy(x.scale);
+      walk(x, y);
+    }
+  };
+  walk(coin, mirror);
+  mirror.position.set(coin.position.x, 2 * floorY - coin.position.y, coin.position.z);
+  mirror.rotation.set(-coin.rotation.x, coin.rotation.y, -coin.rotation.z);
+  mirror.scale.set(coin.scale.x, -coin.scale.y, coin.scale.z);
+}
+
+function setSurinkimas(t) {
+  resetParts();
+  // 1) diskas nukrenta iš viršaus ir šokteli (0–1.0 s)
+  const a = seg(t, 0, 1.0);
+  part.diskas.position.y = (1 - easeOutBounce(a)) * 9;
+  part.diskas.rotation.y = (1 - easeOutCubic(a)) * 1.2;
+  // 2) vežimėlio kėbulas iškyla iš disko (0.9–1.5 s)
+  const b = seg(t, 0.9, 1.5);
+  const bs = b === 0 ? 0.001 : easeOutBack(b);
+  part.kebulas.scale.set(bs, bs, 1); part.kebulas.position.z = -0.4 * (1 - b);
+  part.konturas.scale.copy(part.kebulas.scale); part.konturas.position.copy(part.kebulas.position);
+  // 3) ratai atrieda iš šonų (1.3–2.0 s)
+  const c = easeOutCubic(seg(t, 0.8, 1.5));   // kartu su kėbulu, kad nesimatytų tuščių ratų vietų
+  part.ratasK.position.x = WHEEL_L.x - 4.5 * (1 - c); part.ratasK.rotation.z = (1 - c) * 6;
+  part.ratasD.position.x = WHEEL_R.x + 4.5 * (1 - c); part.ratasD.rotation.z = -(1 - c) * 6;
+  part.ratasK.position.z = part.ratasD.position.z = 0.25 * (1 - c);
+  // 4) VK įšoka (1.9–2.3 s)
+  const v = seg(t, 1.9, 2.3);
+  const vs = v === 0 ? 0.001 : easeOutBack(v);
+  part.vk.scale.set(vs, vs, 1); part.vk.position.z = 1.2 * (1 - v);
+  // 5) raidės ratu – paeiliui iš kairės į dešinę (2.1–3.3 s)
+  letters.forEach(({ mesh, i }) => {
+    const start = 2.1 + i * 0.06;
+    const q = seg(t, start, start + 0.35);
+    const k = q === 0 ? 0.001 : easeOutBack(q);
+    mesh.scale.set(k, k, k);
+    mesh.position.z = (1 - q) * 0.8;
+  });
+  // 6) visa emblema lėtai pasisuka, kad matytųsi gylis (3.2–5 s)
+  const r = easeInOut(seg(t, 3.2, 5.0));
+  coin.rotation.y = Math.sin(r * Math.PI) * 0.42;
+  coin.rotation.x = Math.sin(r * Math.PI) * -0.10;
+
+  camera.position.set(0, L(0.2, 0.5, easeInOut(seg(t, 0, 3))), camDist);
+  camera.lookAt(0, 0.1, 0);
+  fx.uniforms.aber.value = 0;
+  parasas.style.opacity = easeInOut(seg(t, 3.5, 4.1)).toFixed(3);
+}
+
+function setKonturas(t) {
+  resetParts();
+  // 1) vežimėlio kontūras išnyra iš nieko (0–0.7 s): permatomumas + lengvas „šoktelėjimas"
+  const a = seg(t, 0.05, 0.7);
+  mat.konturas.opacity = easeOutCubic(a);
+  const as = a === 0 ? 0.001 : L(0.75, 1, easeOutBack(a));
+  part.konturas.scale.set(as, as, 1);
+  // 2) baltas užpildas, ratai ir VK atsiranda kartu su kontūru – kad vežimėlis nuo pat pradžių atrodytų kaip piešinys linija
+  const b = a;
+  const bs = b === 0 ? 0.001 : as;
+  part.kebulas.scale.set(bs, bs, 1);
+  part.ratasK.scale.set(bs, bs, 1); part.ratasD.scale.set(bs, bs, 1);
+  part.ratasK.rotation.z = (1 - easeOutCubic(b)) * 2; part.ratasD.rotation.z = -(1 - easeOutCubic(b)) * 2;
+  part.vk.scale.set(bs, bs, 1);
+  // 3) diskas išauga už vežimėlio (1.1–1.9 s), pasisukdamas kaip moneta
+  const c = seg(t, 1.1, 1.9);
+  const cs = c === 0 ? 0.001 : easeOutBack(c);
+  part.diskas.scale.set(cs, cs, 1);
+  part.diskas.rotation.y = (1 - easeOutCubic(c)) * 1.4;
+  part.diskas.position.z = -0.6 * (1 - easeOutCubic(c));
+  // 4) užrašas ratu – raidės paeiliui (2.0–3.2 s)
+  letters.forEach(({ mesh, i }) => {
+    const start = 2.0 + i * 0.06;
+    const q = seg(t, start, start + 0.35);
+    const k = q === 0 ? 0.001 : easeOutBack(q);
+    mesh.scale.set(k, k, k);
+    mesh.position.z = (1 - q) * 0.8;
+  });
+  // 5) pabaigoje lėtas pasisukimas, kad matytųsi gylis (3.3–5 s)
+  const r = easeInOut(seg(t, 3.3, 5.0));
+  coin.rotation.y = Math.sin(r * Math.PI) * 0.35;
+  coin.rotation.x = Math.sin(r * Math.PI) * -0.08;
+
+  camera.position.set(0, L(0.3, 0.5, easeInOut(seg(t, 0, 3))), camDist);
+  camera.lookAt(0, 0.1, 0);
+  fx.uniforms.aber.value = 0;
+  parasas.style.opacity = easeInOut(seg(t, 3.5, 4.1)).toFixed(3);
+}
+
+const setState = TAMSUS ? setTamsus : (KONTURAS ? setKonturas : setSurinkimas);
+
+function onResize() { renderer.setSize(W(), H()); buildComposer(); frameCamera(); }
+window.addEventListener("resize", onResize);
+onResize();
+
+window.__renderAt = (t) => { setState(t); composer.render(); return true; };
+window.__DURATION = DURATION;
+
+if (!CAPTURE) {
+  let t0 = performance.now();
+  (function loop() {
+    const t = ((performance.now() - t0) / 1000) % (DURATION + 1.0);
+    window.__renderAt(Math.min(t, DURATION));
+    requestAnimationFrame(loop);
+  })();
+} else {
+  window.__renderAt(0);
+  window.__READY = true;
+}
+</script>
+</body>
+</html>
